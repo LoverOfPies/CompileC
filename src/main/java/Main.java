@@ -12,7 +12,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         Parent root = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
         primaryStage.setTitle("Antipov Kurs");
-        primaryStage.setScene(new Scene(root, 500, 750));
+        primaryStage.setScene(new Scene(root, 500, 600));
         primaryStage.show();
     }
 

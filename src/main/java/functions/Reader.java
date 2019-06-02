@@ -22,13 +22,7 @@ public class Reader {
                     Vars var = new Vars(words[1], words[0]);
                     vars.add(var); //новая переменная Имя Тип
                     if (isMas(words[1])){
-                        vars.get(varsCount).setMas(true);
-                        String t1 = "abc[12], das[22]";
-                        Pattern pattern = Pattern.compile("А.+а");
-                        Matcher matcher = pattern.matcher(t1);
-                        while (matcher.find()) {
-                            System.out.println(text.substring(matcher.start(), matcher.end()));
-                        }
+
                     }
                     if (words[2] != null && words[3] != null && words[2].equals("=")){
                         vars.get(varsCount).setValue(words[3]);

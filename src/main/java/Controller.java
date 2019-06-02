@@ -9,6 +9,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Controller{
     @FXML
     private javafx.scene.control.MenuBar mainMenu;
@@ -40,6 +43,17 @@ public class Controller{
     //События меню файл
     public void fileNew(ActionEvent actionEvent) {
         FileMenu.fileNew(codeArea);
+        String t1 = "abc[12], das[22]";
+        Pattern pattern = Pattern.compile("\\S+[\\d+]");
+        Matcher matcher = pattern.matcher(t1);
+        int count = 0;
+        while(matcher.find()) {
+            count++;
+            System.out.println("Match number "+count);
+            System.out.println("start(): "+matcher.start());
+            System.out.println("end(): "+matcher.end());
+        }
+
     }
 
     public void fileOpen(ActionEvent actionEvent) {
