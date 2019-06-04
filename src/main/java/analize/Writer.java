@@ -1,5 +1,6 @@
-package functions;
+package analize;
 
+import functions.Vars;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 

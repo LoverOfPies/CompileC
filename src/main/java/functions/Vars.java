@@ -13,7 +13,7 @@ public class Vars {
     private Integer masLen; //длинна массива, если isMas true
     private ArrayList<String> mas = new ArrayList();
 
-    Vars(String name, String type){
+    public Vars(String name, String type){
         this.name = name;
         this.type = type;
         this.value = null;
