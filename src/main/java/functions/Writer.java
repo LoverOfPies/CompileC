@@ -18,9 +18,9 @@ public class Writer {
     public void drawVars(){
         if (vars != null){
             for (Vars var : vars){
-                if (var.isLink){
+                if (var.isLink()){
                     drawLink();
-                } else if (var.isMas){
+                } else if (var.isMas()){
 
                 } else {
                     drawBox();
@@ -50,5 +50,9 @@ public class Writer {
 
     private void drawName(String name){
         gc.strokeText(name, 15 + offset, 10, 100);
+    }
+
+    private void drawMas(){
+
     }
 }

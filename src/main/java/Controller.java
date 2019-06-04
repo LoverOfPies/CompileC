@@ -43,8 +43,8 @@ public class Controller{
     //События меню файл
     public void fileNew(ActionEvent actionEvent) {
         FileMenu.fileNew(codeArea);
-        String t1 = "abc[12], das[22]";
-        Pattern pattern = Pattern.compile("\\S+[\\d+]");
+        String t1 = "abc[23], das[22]";
+        Pattern pattern = Pattern.compile("\\[\\d+\\]");
         Matcher matcher = pattern.matcher(t1);
         int count = 0;
         while(matcher.find()) {
@@ -52,6 +52,8 @@ public class Controller{
             System.out.println("Match number "+count);
             System.out.println("start(): "+matcher.start());
             System.out.println("end(): "+matcher.end());
+            String substr2 = t1.substring(matcher.start()+1,matcher.end()-1);
+            System.out.println(substr2);
         }
 
     }

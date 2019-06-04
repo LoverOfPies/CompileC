@@ -22,7 +22,8 @@ public class Reader {
                     Vars var = new Vars(words[1], words[0]);
                     vars.add(var); //новая переменная Имя Тип
                     if (isMas(words[1])){
-
+                        var.setMas(true);
+                        var.setMasLen(getMasLen(words[1]));
                     }
                     if (words[2] != null && words[3] != null && words[2].equals("=")){
                         vars.get(varsCount).setValue(words[3]);
@@ -65,15 +66,32 @@ public class Reader {
 
 
     boolean isMas(String name){
-        int indexStart = name.indexOf("[");
-        int indexLast = name.indexOf("[");
-        if (indexStart == - 1){
-            return false;
+        Pattern pattern = Pattern.compile("\\S+\\[\\d+\\]");
+        Matcher matcher = pattern.matcher(name);
+        while(matcher.find()) {
+            return true;
         }
-        if (indexLast == - 1){
-            return false;
+        return false;
+    }
+
+    Integer getMasLen(String name){
+        Pattern pattern = Pattern.compile("\\[\\d+\\]");
+        Matcher matcher = pattern.matcher(name);
+        while(matcher.find()) {
+            System.out.println("start(): "+matcher.start());
+            System.out.println("end(): "+matcher.end());
+            String s = name.substring(matcher.start()+1,matcher.end()-1);
+            int num;
+            try {
+                num = Integer.parseInt(s);
+            }
+            catch (NumberFormatException e)
+            {
+                num = 0;
+            }
+            return num;
         }
-        return true;
+        return 0;
     }
 
     public ArrayList<Vars> getVars() {
