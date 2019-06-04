@@ -1,43 +1,64 @@
+import analize.CodeAreaReader;
+import functions.Drawer;
 import functions.FileMenu;
-import functions.Reader;
-import functions.Writer;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Controller{
+public class Controller {
+
     @FXML
-    private javafx.scene.control.MenuBar mainMenu;
+    public ScrollPane scrollPane;
     @FXML
-    private javafx.scene.control.TextArea codeArea;
+    private MenuBar mainMenu;
     @FXML
-    private javafx.scene.layout.AnchorPane canvasPane;
+    private TextArea codeArea;
     @FXML
-    private Canvas regularCanvas;
+    private AnchorPane canvasPane;
+    @FXML
+    private Canvas canvas;
+
+    private Drawer drawer;
+    private CodeAreaReader reader;
+
     @FXML
     private void initialize() {
-        GraphicsContext gc = regularCanvas.getGraphicsContext2D();
-
-        ReadOnlyDoubleProperty widthProperty = canvasPane.widthProperty();
-        ReadOnlyDoubleProperty heightProperty = canvasPane.heightProperty();
-        regularCanvas.widthProperty().bind(widthProperty);
-        regularCanvas.heightProperty().bind(heightProperty);
-
-        regularCanvas.widthProperty().addListener((obs, oldWidth, newWidth) -> drawArea(gc));
-        regularCanvas.heightProperty().addListener((obs, oldHeight, newHeight) -> drawArea(gc));
-
-        drawArea(gc);
+        scrollPane.setContent(canvas);
+        this.reader = new CodeAreaReader(codeArea);
+        this.drawer = new Drawer(canvas, reader.getVars());
+        registerEventsForGraphicsContext();
+        drawer.draw();
     }
 
-    private void drawArea(GraphicsContext gc) {
-
+    /**
+     * Метод регистрации событий для контекста графики
+     */
+    private void registerEventsForGraphicsContext() {
+        final GraphicsContext gc = canvas.getGraphicsContext2D();
+        scrollPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("changed with" + oldValue + " newvalue " + newValue);
+            System.out.println("canvas with " + canvas.getWidth());
+            if (newValue != null) {
+                gc.getCanvas().widthProperty().setValue(newValue);
+                drawer.draw();
+            }
+        });
+        scrollPane.heightProperty().addListener(((observable, oldValue, newValue) -> {
+            System.out.println("changed height" + oldValue + " newvalue " + newValue);
+            System.out.println("canvas height " + canvas.getHeight());
+            canvas.setHeight((Double) newValue);
+            System.out.println("after canvas height " + canvas.getHeight());
+            drawer.draw();
+        }));
     }
 
     //События меню файл
@@ -47,12 +68,12 @@ public class Controller{
         Pattern pattern = Pattern.compile("\\[\\d+\\]");
         Matcher matcher = pattern.matcher(t1);
         int count = 0;
-        while(matcher.find()) {
+        while (matcher.find()) {
             count++;
-            System.out.println("Match number "+count);
-            System.out.println("start(): "+matcher.start());
-            System.out.println("end(): "+matcher.end());
-            String substr2 = t1.substring(matcher.start()+1,matcher.end()-1);
+            System.out.println("Match number " + count);
+            System.out.println("start(): " + matcher.start());
+            System.out.println("end(): " + matcher.end());
+            String substr2 = t1.substring(matcher.start() + 1, matcher.end() - 1);
             System.out.println(substr2);
         }
 
@@ -80,14 +101,9 @@ public class Controller{
 
     //События меню выполнить
     public void runFull(ActionEvent actionEvent) {
-        Reader reader = new Reader();
         reader.readCode(codeArea);
-
-        GraphicsContext gc = regularCanvas.getGraphicsContext2D();
-
-        Writer writer = new Writer(gc, reader.getVars());
-        writer.drawVars();
+        drawer.setVars(reader.getVars());
+        drawer.draw();
     }
-
 
 }
