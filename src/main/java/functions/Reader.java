@@ -18,17 +18,34 @@ public class Reader {
         for(String line : lines){
             words = line.trim().split("\\s+"); //чтение слов
             if (words[0] != null && isType(words[0])){
-                if (words[1] != null && isNewVar(words[1])){
-                    Vars var = new Vars(words[1], words[0]);
-                    vars.add(var); //новая переменная Имя Тип
-                    if (isMas(words[1])){
-                        var.setMas(true);
-                        var.setMasLen(getMasLen(words[1]));
-                    }
-                    if (words[2] != null && words[3] != null && words[2].equals("=")){
-                        vars.get(varsCount).setValue(words[3]);
+                String strNonType = line.substring(words[0].length());
+                System.out.println(strNonType);
+                if(isMas(strNonType)){
+                    strNonType = strNonType.replaceAll("[\\s]{2,}", " ");
+                    String strOnlyName = strNonType.substring(0, strNonType.indexOf("["));
+                    String strMasLen= strNonType.substring(strNonType.indexOf("[")+1,strNonType.indexOf("]"));
+                    Vars var = new Vars(strOnlyName, words[0]);
+                    vars.add(var);
+                    vars.get(varsCount).setMasLen(Integer.parseInt(strMasLen));
+                    vars.get(varsCount).setMas(true);
+                    if (strNonType.indexOf("=") > 0){
+                        String strOnlyValue = strNonType.substring(strNonType.indexOf("=")+1);
+                        for (String val : strOnlyValue.split(",")) {
+                            vars.get(varsCount).addInMas(val);
+                        }
                     }
                     varsCount++;
+                } else {
+                    strNonType = strNonType.replaceAll("[\\s]{2,}", " ");
+                    String strOnlyName = strNonType.substring(0, strNonType.indexOf("="));
+                    String strOnlyValue = strNonType.substring(strNonType.indexOf("=")+1);
+                    String[] ws = strOnlyName.trim().split(",");
+                    for(String w : ws) {
+                        Vars var = new Vars(w, words[0]);
+                        vars.add(var);
+                        vars.get(varsCount).setValue(strOnlyValue);
+                        varsCount++;
+                    }
                 }
             }
             if (words[0] != null && !isNewVar(words[0]) && !isType(words[0])){
@@ -72,26 +89,6 @@ public class Reader {
             return true;
         }
         return false;
-    }
-
-    Integer getMasLen(String name){
-        Pattern pattern = Pattern.compile("\\[\\d+\\]");
-        Matcher matcher = pattern.matcher(name);
-        while(matcher.find()) {
-            System.out.println("start(): "+matcher.start());
-            System.out.println("end(): "+matcher.end());
-            String s = name.substring(matcher.start()+1,matcher.end()-1);
-            int num;
-            try {
-                num = Integer.parseInt(s);
-            }
-            catch (NumberFormatException e)
-            {
-                num = 0;
-            }
-            return num;
-        }
-        return 0;
     }
 
     public ArrayList<Vars> getVars() {

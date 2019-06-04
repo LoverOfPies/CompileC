@@ -1,5 +1,8 @@
 package functions;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 //Класс переменных для отрисовки
 public class Vars {
     private String name;    //имя переменной
@@ -8,6 +11,7 @@ public class Vars {
     private boolean isLink; //если указатель true
     private boolean isMas; //если массив true
     private Integer masLen; //длинна массива, если isMas true
+    private ArrayList<String> mas = new ArrayList();
 
     Vars(String name, String type){
         this.name = name;
@@ -23,9 +27,12 @@ public class Vars {
         System.out.println("type: " + type);
         System.out.println("value: " + value);
         System.out.println("isLink: " + isLink);
-        System.out.println("isLink: " + isLink);
         System.out.println("isMas: " + isMas);
         System.out.println("masLen: " + masLen);
+        System.out.println("masValue: ");
+        for (String m : mas){
+            System.out.print(m + " || ");
+        }
     }
 
     public String getName() {
@@ -58,5 +65,9 @@ public class Vars {
 
     public Integer getMasLen() {
         return masLen;
+    }
+
+    public void addInMas(String el){
+        mas.add(el);
     }
 }
