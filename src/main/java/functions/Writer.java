@@ -21,21 +21,26 @@ public class Writer {
                 if (var.isLink()){
                     drawLink();
                 } else if (var.isMas()){
-
+                    for (int i = 0; i<var.getMasLen(); i++){
+                        int masOff = i * 40;
+                        drawBox(masOff);
+                        drawValue(var.getValue(), masOff);
+                    }
+                    offset += 80;
                 } else {
-                    drawBox();
+                    drawBox(0);
                     drawName(var.getName());
-                    drawValue(var.getValue());
+                    drawValue(var.getValue(), 0);
                     offset += 80;
                 }
             }
         }
     }
 
-    private void drawBox(){
+    private void drawBox(int masOff){
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1);
-        gc.strokeRect(10 + offset, 30, 40, 40);
+        gc.strokeRect(10 + offset, 30 + masOff, 40, 40);
     }
 
     private void drawLink(){
@@ -44,8 +49,8 @@ public class Writer {
         gc.strokeOval(30, 30, 40, 40);
     }
 
-    private void drawValue(String value){
-        gc.fillText(value, 13 + offset, 50, 100);
+    private void drawValue(String value, int masOff){
+        gc.fillText(value, 13 + offset, 50 + masOff, 100);
     }
 
     private void drawName(String name){

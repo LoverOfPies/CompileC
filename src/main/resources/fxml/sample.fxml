@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.canvas.*?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<GridPane alignment="CENTER" hgap="10.0" prefHeight="393.0" prefWidth="381.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="Controller">
+<GridPane alignment="CENTER" hgap="10.0" prefHeight="393.0" prefWidth="381.0" vgap="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
   <children>
     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
       <children>
@@ -28,7 +32,7 @@
                     <MenuItem mnemonicParsing="false" onAction="#fileSave" text="Сохранить" />
                     <MenuItem mnemonicParsing="false" onAction="#fileSaveAs" text="Сохранить как" />
                     <SeparatorMenuItem mnemonicParsing="false" />
-                    <MenuItem mnemonicParsing="false" onAction="#fileExit" text="Выход" fx:id="fileExit" />
+                    <MenuItem fx:id="fileExit" mnemonicParsing="false" onAction="#fileExit" text="Выход" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Выполнить">
@@ -66,7 +70,15 @@
           <items>
             <AnchorPane fx:id="canvasPane" maxHeight="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="160.0">
               <children>
-                <Canvas fx:id="regularCanvas" />
+                        <ScrollPane layoutX="8.0" prefHeight="200.0" prefWidth="332.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="413.0" prefWidth="645.0">
+                                 <children>
+                            <Canvas fx:id="regularCanvas" />
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </ScrollPane>
               </children>
               <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" fx:id="x1" />
