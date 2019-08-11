@@ -1,6 +1,6 @@
 package analize;
 
-import functions.Vars;
+import functions.Var;
 import javafx.scene.control.TextArea;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class CodeAreaReader {
 
-    private static List<Vars> vars = new ArrayList<>(); ///массив объектов для отрисовки
+    private static List<Var> vars = new ArrayList<>(); ///массив объектов для отрисовки
     private final TextArea codeArea;
 
     public CodeAreaReader(TextArea codeArea) {
@@ -18,57 +18,52 @@ public class CodeAreaReader {
         readCode(codeArea);
     }
 
+    /*
+    int a, b, c;
+    int *a;
+    char ^fd;
+    int dfd[443];
+
+     */
     public void readCode(TextArea codeArea) {
-        String text = codeArea.getText();
-        String[] words;
-        String[] lines = text.trim().split(";"); //чтение строк
-        int varsCount = 0;
+        vars.clear();
+        String text = codeArea.getText().replaceAll("\n","");
+        String words[];
+        String[] lines = text.trim().split(";");
+        //цикл по строкам (;)
         for (String line : lines) {
-            words = line.trim().split("\\s+"); //чтение слов
-            if (words[0] != null && isType(words[0])) {
-                String strNonType = line.substring(words[0].length());
-                System.out.println(strNonType);
-                if (isMas(strNonType)) {
-                    strNonType = strNonType.replaceAll("[\\s]{2,}", " ");
-                    String strOnlyName = strNonType.substring(0, strNonType.indexOf("["));
-                    String strMasLen = strNonType.substring(strNonType.indexOf("[") + 1, strNonType.indexOf("]"));
-                    functions.Vars var = new Vars(strOnlyName, words[0]);
-                    vars.add(var);
-                    vars.get(varsCount).setMasLen(Integer.parseInt(strMasLen));
-                    vars.get(varsCount).setMas(true);
-                    if (strNonType.indexOf("=") > 0) {
-                        String strOnlyValue = strNonType.substring(strNonType.indexOf("=") + 1);
-                        for (String val : strOnlyValue.split(",")) {
-                            vars.get(varsCount).addInMas(val);
-                        }
-                    }
-                    varsCount++;
-                } else {
-                    strNonType = strNonType.replaceAll("[\\s]{2,}", " ");
-                    String strOnlyName = strNonType.substring(0, strNonType.indexOf("="));
-                    String strOnlyValue = strNonType.substring(strNonType.indexOf("=") + 1);
-                    String[] ws = strOnlyName.trim().split(",");
-                    for (String w : ws) {
-                        functions.Vars var = new functions.Vars(w, words[0]);
-                        vars.add(var);
-                        vars.get(varsCount).setValue(strOnlyValue);
-                        varsCount++;
-                    }
+            line = line.trim();
+            words = line.split("\\s+"); //чтение слов
+            if (isType(words[0])) {
+                String type = words[0];
+                String strNonType = line.substring(words[0].length()).replaceAll(" ", "");
+                checkIndex(strNonType, type);
+                checkLink(strNonType, type);
+                checkMas(strNonType, type);
+            } else {
+                //TO DO: продумать дальнейший алгоритм
+            }
+        }
+        vars.forEach(x -> x.printData());
+    }
+
+    //проверка на название переменной
+    boolean isNewVar(String name) {
+        if (name == null)
+            return false;
+        if (vars != null) {
+            for (Var var : vars) {
+                if (var != null && var.getName().equals(name)) {
+                    return false;
                 }
             }
-            if (words[0] != null && !isNewVar(words[0]) && !isType(words[0])) {
-
-            }
         }
-        for (int i = 0; i < varsCount; i++) {
-            vars.get(i).printData();
-            System.out.println();
-        }
+        return true;
     }
 
     //проверка на тип
     boolean isType(String word) {
-        String[] types = {"bool", "char", "int", "long", "float", "double", "string"};
+        String[] types = {"bool", "char", "int", "long", "float", "double"};
         for (String type : types) {
             if (word.equals(type)) {
                 return true;
@@ -77,29 +72,63 @@ public class CodeAreaReader {
         return false;
     }
 
-    //Переменная существует?
-    boolean isNewVar(String name) {
-        if (vars != null) {
-            for (Vars var : vars) {
-                if (var != null && var.getName() == name) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-
-    boolean isMas(String name) {
-        Pattern pattern = Pattern.compile("\\S+\\[\\d+\\]");
-        Matcher matcher = pattern.matcher(name);
+    private void checkIndex(String text, String type) {
+        String varName = null;
+        Pattern pattern = Pattern.compile("^\\*\\S+");
+        Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
-            return true;
+            varName = text.substring(matcher.start()+1, matcher.end());
         }
-        return false;
+        pattern = Pattern.compile("^\\*\\S+?=");
+        matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            varName = text.substring(matcher.start()+1, matcher.end()-1);
+        }
+        if (!isNewVar(varName))
+            return;
+        Var var = new Var(varName, type);
+        var.setIndex(true);
+        vars.add(var);
     }
 
-    public List<Vars> getVars() {
+    private void checkLink(String text, String type) {
+        String varName = null;
+        Pattern pattern = Pattern.compile("^\\^\\S+");
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            varName = text.substring(matcher.start() + 1, matcher.end());
+        }
+        pattern = Pattern.compile("^\\^\\S+?=");
+        matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            varName = text.substring(matcher.start() + 1, matcher.end() - 1);
+        }
+        if (!isNewVar(varName))
+            return;
+        Var var = new Var(varName, type);
+        var.setLink(true);
+        vars.add(var);
+    }
+
+    private void checkMas(String text, String type) {
+        String varName = null;
+        Pattern pattern = Pattern.compile("^\\S+$\\[\\d+\\]");
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            varName = text.substring(matcher.start() + 1, matcher.end());
+        }
+        pattern = Pattern.compile("^\\S+\\[\\d+\\]?=");
+        matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            varName = text.substring(matcher.start() + 1, matcher.end() - 1);
+        }
+        if (!isNewVar(varName))
+            return;
+        Var var = new Var(varName, "int");
+        vars.add(var);
+    }
+
+    public List<Var> getVars() {
         return vars;
     }
 

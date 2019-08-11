@@ -30,7 +30,7 @@
                                 <Menu mnemonicParsing="false" text="Выполнить">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#runFull" text="До конца"/>
-                                        <MenuItem mnemonicParsing="false" text="По шагам"/>
+                                        <MenuItem mnemonicParsing="false" onAction="#runStep" text="По шагам"/>
                                         <MenuItem mnemonicParsing="false" text="Остановить"/>
                                         <SeparatorMenuItem mnemonicParsing="false"/>
                                         <MenuItem mnemonicParsing="false" text="Автоматически"/>

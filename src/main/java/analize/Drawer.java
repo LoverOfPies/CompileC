@@ -1,5 +1,6 @@
-package functions;
+package analize;
 
+import functions.Var;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -11,10 +12,10 @@ import static javafx.scene.paint.Color.BLACK;
 public class Drawer {
 
     private final Canvas canvas;
-    private List<Vars> vars;
+    private List<Var> vars;
     private int offset = 0;
 
-    public Drawer(Canvas canvas, List<Vars> vars) {
+    public Drawer(Canvas canvas, List<Var> vars) {
         this.canvas = canvas;
         this.vars = vars;
     }
@@ -35,7 +36,7 @@ public class Drawer {
 
     private void paint() {
         if (vars != null) {
-            for (Vars var : vars) {
+            for (Var var : vars) {
                 if (var.isLink()) {
                     drawLink();
                 } else if (var.isMas()) {
@@ -80,7 +81,7 @@ public class Drawer {
         gc.strokeText(name, 15 + offset, 10, 100);
     }
 
-    public void setVars(List<Vars> vars) {
+    public void setVars(List<Var> vars) {
         this.vars = vars;
     }
 }

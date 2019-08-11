@@ -1,5 +1,5 @@
 import analize.CodeAreaReader;
-import functions.Drawer;
+import analize.Drawer;
 import functions.FileMenu;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -45,18 +45,13 @@ public class Controller {
     private void registerEventsForGraphicsContext() {
         final GraphicsContext gc = canvas.getGraphicsContext2D();
         scrollPane.widthProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("changed with" + oldValue + " newvalue " + newValue);
-            System.out.println("canvas with " + canvas.getWidth());
             if (newValue != null) {
                 gc.getCanvas().widthProperty().setValue(newValue);
                 drawer.draw();
             }
         });
         scrollPane.heightProperty().addListener(((observable, oldValue, newValue) -> {
-            System.out.println("changed height" + oldValue + " newvalue " + newValue);
-            System.out.println("canvas height " + canvas.getHeight());
             canvas.setHeight((Double) newValue);
-            System.out.println("after canvas height " + canvas.getHeight());
             drawer.draw();
         }));
     }
@@ -70,11 +65,7 @@ public class Controller {
         int count = 0;
         while (matcher.find()) {
             count++;
-            System.out.println("Match number " + count);
-            System.out.println("start(): " + matcher.start());
-            System.out.println("end(): " + matcher.end());
             String substr2 = t1.substring(matcher.start() + 1, matcher.end() - 1);
-            System.out.println(substr2);
         }
 
     }
@@ -106,4 +97,18 @@ public class Controller {
         drawer.draw();
     }
 
+    public void runStep(ActionEvent actionEvent) {
+        String text = "^fd";
+        text = text.replaceAll(" ", "");
+        Pattern pattern = Pattern.compile("^\\S+$\\[\\d+\\]");
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            System.out.println(text.substring(matcher.start() + 1, matcher.end()));
+        }
+        pattern = Pattern.compile("^\\S+\\[\\d+\\]?=");
+        matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            System.out.println(text.substring(matcher.start() + 1, matcher.end() - 1));
+        }
+    }
 }
